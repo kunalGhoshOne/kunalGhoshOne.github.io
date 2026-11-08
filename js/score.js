@@ -121,7 +121,7 @@ export function createScore() {
     said.add(key);
     const u = new SpeechSynthesisUtterance(text);
     if (voice) u.voice = voice;
-    u.rate = 0.68; u.pitch = 0.1; u.volume = 1; // as low and slow as browser speech allows
+    u.rate = 0.68; u.pitch = 0.5; u.volume = 1;
     // let the music breathe out while the voice speaks
     const duck = v => { if (!ctx) return; master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setValueAtTime(master.gain.value, ctx.currentTime); master.gain.linearRampToValueAtTime(on ? v : 0, ctx.currentTime + 0.6); };
     u.onstart = () => duck(0.18); u.onend = () => duck(0.5);

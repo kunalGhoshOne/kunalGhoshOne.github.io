@@ -121,7 +121,10 @@ document.fonts.ready.then(async () => {
       const sy = new Systems($('#syCanvas'), $('#syLabels'));
       ScrollTrigger.create({
         trigger: '#systems', start: 'top top', end: '+=2200', pin: '#systemsPin', scrub: 0.6, anticipatePin: 1,
-        onUpdate: s => { sy.p = s.progress; },
+        onUpdate: s => {
+          sy.p = s.progress;
+          if (s.progress > 0.04) score.say('systems', 'The machinery... exploded.'); else score.unsay('systems');
+        },
         onRefresh: () => sy.resize()
       });
       ScrollTrigger.create({ trigger: '#systems', start: 'top bottom', end: 'bottom top', onToggle: s => s.isActive ? sy.start() : sy.stop() });
@@ -136,6 +139,7 @@ document.fonts.ready.then(async () => {
     onUpdate: s => {
       sea.p = s.progress;
       if (s.progress > 0.1) score.say('pass', 'Let my code... pass.'); else score.unsay('pass');
+      if (s.progress > 0.92) score.say('seahead', 'A path... through the noise.'); else if (s.progress < 0.85) score.unsay('seahead');
     },
     onRefresh: () => sea.resize()
   });
@@ -146,7 +150,12 @@ document.fonts.ready.then(async () => {
   $$('.sec-head, .proj .txt, .spec > div, .tl li, .contact .wrap > *').forEach(n => { if (!n.closest('.pin')) n.classList.add('rv'); });
   ScrollTrigger.batch('.rv', { start: 'top 88%', onEnter: b => gsap.to(b, { opacity: 1, y: 0, duration: 1, stagger: .08, ease: 'power3.out', overwrite: true }) });
 
-  ScrollTrigger.create({ trigger: '#contact', start: 'top 55%', onEnter: () => score.say('avail', 'Now... available.'), onLeaveBack: () => score.unsay('avail') });
+  ScrollTrigger.create({ trigger: '#contact', start: 'top 55%', onEnter: () => score.say('avail', 'Now available... for senior backend and platform roles.'), onLeaveBack: () => score.unsay('avail') });
+  ScrollTrigger.create({ trigger: '#specs', start: 'top 60%', onEnter: () => score.say('specs', 'Kunal Ghosh... as specified.'), onLeaveBack: () => score.unsay('specs') });
+  // headlines the narrator reads as you reach them
+  ScrollTrigger.create({ trigger: '#hero', start: 'top 40%', end: 'bottom 40%', onEnterBack: () => score.say('hero', HERO_LINE), onLeave: () => score.unsay('hero') });
+  ScrollTrigger.create({ trigger: '#projects', start: 'top 60%', onEnter: () => score.say('projects', 'Five tools... each with a reason to exist.'), onLeaveBack: () => score.unsay('projects') });
+  ScrollTrigger.create({ trigger: '#story', start: 'top 60%', onEnter: () => score.say('story', 'An economics student... who ended up under the hood.'), onLeaveBack: () => score.unsay('story') });
 
   // tools land in the spec sheet
   $$('.spec .hl').forEach(r => ScrollTrigger.create({ trigger: r, start: 'top 80%', end: 'bottom 20%', toggleClass: 'lit' }));
@@ -155,7 +164,10 @@ document.fonts.ready.then(async () => {
 });
 
 /* ---------------- score + narration (off by default) ---------------- */
+const HERO_LINE = "You've never seen my work... That's the point.";
 $('#sound').addEventListener('click', () => {
   const on = score.toggle();
   $('#sound').setAttribute('aria-pressed', String(on));
+  // turned on at the top of the page: the narrator opens with the headline
+  if (on && scrollY < innerHeight * 0.6) { score.unsay('hero'); setTimeout(() => score.say('hero', HERO_LINE), 900); }
 });
