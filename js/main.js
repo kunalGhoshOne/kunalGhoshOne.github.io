@@ -1,6 +1,8 @@
 import { Vritra } from './vritra.js';
 import { Sea } from './sea.js';
 import { buildIcons } from './icons.js';
+import { createScore } from './score.js';
+const score = createScore();
 
 const gsap = window.gsap, ScrollTrigger = window.ScrollTrigger;
 gsap.registerPlugin(ScrollTrigger);
@@ -60,6 +62,7 @@ function genesis(short) {
     gsap.set(light, { x, y });
     const far = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
     light.dataset.s = (far * 2.2 / 20).toFixed(1);
+    score.unsay('light'); score.say('light', 'Let there be light.');
     caret.style.animation = 'none';
   });
   tl.to(caret, { boxShadow: '0 0 24px 8px #fff, 0 0 60px 20px rgba(255,236,190,.8)', background: '#fff', duration: short ? .45 : .6, ease: 'power2.in' });
@@ -99,7 +102,9 @@ document.fonts.ready.then(async () => {
       vrB.style.opacity = sm(.86, .93, p);
       vrRes.style.opacity = sm(.9, .95, p);
       vrHint.style.opacity = (1 - sm(.3, .45, p)) * sm(0, .05, p + .05);
-      sound.thunder(p);
+      score.strike(p);
+      if (p > 0.12) score.say('vritra', 'Every team has a Vritra.'); else score.unsay('vritra');
+      if (p > 0.9) score.say('flows', "What flows, when it's gone."); else if (p < 0.8) score.unsay('flows');
     },
     onToggle: s => s.isActive ? vr.start() : vr.stop(),
     onRefresh: () => { vr.resize(); },
@@ -128,7 +133,10 @@ document.fonts.ready.then(async () => {
   const sea = new Sea($('#seaCanvas'), $('#seaHead'));
   ScrollTrigger.create({
     trigger: '#sea', start: 'top top', end: '+=2600', pin: '#seaPin', scrub: true, anticipatePin: 1,
-    onUpdate: s => { sea.p = s.progress; },
+    onUpdate: s => {
+      sea.p = s.progress;
+      if (s.progress > 0.1) score.say('pass', 'Let my code pass.'); else score.unsay('pass');
+    },
     onRefresh: () => sea.resize()
   });
   ScrollTrigger.create({ trigger: '#sea', start: 'top bottom', end: 'bottom top', onToggle: s => s.isActive ? sea.start() : sea.stop() });
@@ -138,47 +146,16 @@ document.fonts.ready.then(async () => {
   $$('.sec-head, .proj .txt, .spec > div, .tl li, .contact .wrap > *').forEach(n => { if (!n.closest('.pin')) n.classList.add('rv'); });
   ScrollTrigger.batch('.rv', { start: 'top 88%', onEnter: b => gsap.to(b, { opacity: 1, y: 0, duration: 1, stagger: .08, ease: 'power3.out', overwrite: true }) });
 
+  ScrollTrigger.create({ trigger: '#contact', start: 'top 55%', onEnter: () => score.say('avail', 'Now available.'), onLeaveBack: () => score.unsay('avail') });
+
   // tools land in the spec sheet
   $$('.spec .hl').forEach(r => ScrollTrigger.create({ trigger: r, start: 'top 80%', end: 'bottom 20%', toggleClass: 'lit' }));
 
   ScrollTrigger.refresh();
 });
 
-/* ---------------- ambient sound (off by default) ---------------- */
-const sound = (() => {
-  let ctx = null, master = null, on = false, struck = false;
-  const btn = $('#sound');
-  function init() {
-    ctx = new (window.AudioContext || window.webkitAudioContext)();
-    master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
-    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 900; lp.connect(master);
-    [110, 164.81, 220.5, 329.6].forEach((f, i) => {
-      const o = ctx.createOscillator(); o.type = i % 2 ? 'triangle' : 'sine'; o.frequency.value = f; o.detune.value = (i - 1.5) * 6;
-      const g = ctx.createGain(); g.gain.value = 0.05 / (i + 1);
-      const lfo = ctx.createOscillator(); lfo.frequency.value = 0.05 + i * 0.03; const lg = ctx.createGain(); lg.gain.value = 0.025 / (i + 1);
-      lfo.connect(lg); lg.connect(g.gain); lfo.start();
-      o.connect(g); g.connect(lp); o.start();
-    });
-  }
-  function thunder(p) {
-    if (!on || !ctx) return;
-    if (p > 0.53 && !struck) {
-      struck = true;
-      const n = ctx.sampleRate * 2.2, buf = ctx.createBuffer(1, n, ctx.sampleRate), d = buf.getChannelData(0);
-      for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 3);
-      const src = ctx.createBufferSource(); src.buffer = buf;
-      const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 700;
-      const g = ctx.createGain(); g.gain.value = 0.5;
-      src.connect(f); f.connect(g); g.connect(ctx.destination); src.start();
-    }
-    if (p < 0.45) struck = false;
-  }
-  btn.addEventListener('click', () => {
-    if (!ctx) init();
-    on = !on; btn.setAttribute('aria-pressed', String(on));
-    ctx.resume();
-    master.gain.cancelScheduledValues(ctx.currentTime);
-    master.gain.linearRampToValueAtTime(on ? 0.6 : 0, ctx.currentTime + 1.2);
-  });
-  return { thunder };
-})();
+/* ---------------- score + narration (off by default) ---------------- */
+$('#sound').addEventListener('click', () => {
+  const on = score.toggle();
+  $('#sound').setAttribute('aria-pressed', String(on));
+});
