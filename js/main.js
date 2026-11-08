@@ -50,11 +50,11 @@ function genesis(short) {
   // move the caret onto the first line while typing it
   const l1 = $('.g-line');
   tl.add(() => l1.appendChild(caret));
-  tl.to({}, { duration: short ? .2 : .9 });
-  tl.add(type(g1, L1, short ? .012 : .045));
+  tl.to({}, { duration: short ? .5 : .9 });
+  tl.add(type(g1, L1, short ? .028 : .045));
   tl.add(() => $('.g-ref').appendChild(caret), '+=.25');
-  tl.add(type(g2, L2, short ? .015 : .06), '+=.15');
-  tl.to({}, { duration: short ? .2 : .7 });
+  tl.add(type(g2, L2, short ? .04 : .06), '+=.15');
+  tl.to({}, { duration: short ? .5 : .7 });
   tl.add(() => {
     const r = caret.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
     gsap.set(light, { x, y });
@@ -62,11 +62,11 @@ function genesis(short) {
     light.dataset.s = (far * 2.2 / 20).toFixed(1);
     caret.style.animation = 'none';
   });
-  tl.to(caret, { boxShadow: '0 0 24px 8px #fff, 0 0 60px 20px rgba(255,236,190,.8)', background: '#fff', duration: short ? .25 : .6, ease: 'power2.in' });
-  tl.to(light, { scale: 3, duration: short ? .2 : .45, ease: 'power2.in' });
-  tl.to(light, { scale: () => +light.dataset.s, duration: short ? .7 : 1.5, ease: 'power3.in' });
+  tl.to(caret, { boxShadow: '0 0 24px 8px #fff, 0 0 60px 20px rgba(255,236,190,.8)', background: '#fff', duration: short ? .45 : .6, ease: 'power2.in' });
+  tl.to(light, { scale: 3, duration: short ? .35 : .45, ease: 'power2.in' });
+  tl.to(light, { scale: () => +light.dataset.s, duration: short ? 1.2 : 1.5, ease: 'power3.in' });
   tl.set(G, { background: '#fff' });
-  tl.to(G, { opacity: 0, duration: short ? .6 : 1.1, ease: 'power2.out', onStart: () => emerge(.15) });
+  tl.to(G, { opacity: 0, duration: short ? .9 : 1.1, ease: 'power2.out', onStart: () => emerge(.15) });
   tl.add(() => { G.style.display = 'none'; root.classList.remove('intro'); caret.style.animation = ''; caret.style.boxShadow = ''; caret.style.background = ''; lenis && lenis.start(); ScrollTrigger.refresh(); });
   $('#gskip').onclick = () => { tl.progress(1); };
   return tl;

@@ -96,6 +96,40 @@ export class Sea {
       }
       ctx.textAlign = 'center';
       ctx.fillStyle = `rgba(200,144,46,${appear})`; ctx.beginPath(); ctx.arc(center, cy + cFS * 0.75, 3.5, 0, Math.PI * 2); ctx.fill();
+
+      // the staff, held at the end of the sentence. It rises and glows as the sea
+      // parts, then sways with each step as the sentence walks through.
+      const hold = smooth(0.16, 0.22, p);
+      if (hold > 0) {
+        const raise = smooth(0.2, 0.3, p) * (1 - smooth(0.36, 0.46, p) * 0.6);
+        const walk = lead > 0 && lead < 1 ? 1 : 0;
+        const sway = walk * Math.sin(this.t * 5) * 0.07 + 0.06 - raise * 0.12;
+        const bx = center + cw2 / 2 + cFS * 0.32, by = cy + cFS * 0.62 - raise * cFS * 0.55 + walk * Math.abs(Math.sin(this.t * 5)) * -3;
+        const L = cFS * 2.3;
+        ctx.save();
+        ctx.translate(bx, by); ctx.rotate(sway);
+        ctx.globalAlpha = hold;
+        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        if (raise > 0) { ctx.shadowColor = 'rgba(232,182,90,.95)'; ctx.shadowBlur = 26 * raise; }
+        const staff = () => {
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.bezierCurveTo(-2, -L * 0.35, 2, -L * 0.7, 0, -L);           // the shaft, slightly knotted
+          ctx.bezierCurveTo(-1, -L - cFS * 0.42, -cFS * 0.62, -L - cFS * 0.42, -cFS * 0.6, -L - cFS * 0.08); // the crook
+          ctx.quadraticCurveTo(-cFS * 0.58, -L + cFS * 0.1, -cFS * 0.38, -L + cFS * 0.06);
+        };
+        ctx.strokeStyle = 'rgba(140,95,20,1)'; ctx.lineWidth = Math.max(3, cFS * 0.075); staff(); ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = `rgba(232,182,90,${0.55 + 0.45 * raise})`; ctx.lineWidth = Math.max(1, cFS * 0.025); staff(); ctx.stroke();
+        // light gathering at the head of the staff while it is raised
+        if (raise > 0.05) {
+          const hx = -cFS * 0.3, hy = -L - cFS * 0.2;
+          const g = ctx.createRadialGradient(hx, hy, 0, hx, hy, cFS * 1.4);
+          g.addColorStop(0, `rgba(255,248,225,${0.9 * raise})`); g.addColorStop(.35, `rgba(232,182,90,${0.45 * raise})`); g.addColorStop(1, 'rgba(232,182,90,0)');
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(hx, hy, cFS * 1.4, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.restore();
+      }
     }
     // and the tools follow it through, one after another
     ctx.font = this.tfont; ctx.textAlign = 'center';
