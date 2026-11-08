@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kunal Ghosh — Backend and infrastructure engineer</title>
+<meta name="description" content="Kunal Ghosh builds queue runtimes, SSH gateways, mail servers and container networking tools in PHP, Go and Node.js. Open source on GitHub.">
+<meta property="og:title" content="Kunal Ghosh — Backend and infrastructure engineer">
+<meta property="og:description" content="Queue runtimes, SSH gateways, mail servers and container networking. PHP, Go, Node.js, Python.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#f4efe6">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c2410c'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='18' font-weight='700' text-anchor='middle' fill='%23f4efe6'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4efe6; --surface:#fbf8f2; --ink:#1c1917; --muted:#6b645b; --line:#ddd5c7; --accent:#c2410c; --accent-ink:#fff7ed;
+  --code-bg:#1c1917; --code-ink:#e7e0d3;
+  --serif:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#14120f;--surface:#1c1915;--ink:#efe9dd;--muted:#a39a8b;--line:#2d2822;--accent:#f97316;--accent-ink:#1c1917;--code-bg:#0d0b09;--code-ink:#e7e0d3}
+}
+:root[data-theme="dark"]{--bg:#14120f;--surface:#1c1915;--ink:#efe9dd;--muted:#a39a8b;--line:#2d2822;--accent:#f97316;--accent-ink:#1c1917;--code-bg:#0d0b09;--code-ink:#e7e0d3}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--accent);color:var(--accent-ink);padding:8px 14px;border-radius:6px;z-index:10}
+.skip:focus{left:8px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+header.nav{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font:600 15px var(--mono);text-decoration:none;letter-spacing:-.02em}
+.logo b{color:var(--accent)}
+.nav ul{display:flex;gap:26px;list-style:none;margin:0;padding:0;font-size:14px}
+.nav ul a{text-decoration:none;color:var(--muted);background:linear-gradient(var(--accent),var(--accent)) 0 100%/0 1px no-repeat;transition:color .2s,background-size .25s;padding:4px 0}
+.nav ul a:hover{color:var(--ink);background-size:100% 1px}
+.theme{background:none;border:1px solid var(--line);color:var(--ink);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:15px;transition:border-color .2s}
+.theme:hover{border-color:var(--accent)}
+
+.hero{min-height:calc(100svh - 60px);display:flex;align-items:center;padding:56px 0}
+.hero .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center;width:100%}
+.eyebrow{font:500 13px var(--mono);color:var(--accent);letter-spacing:.04em;margin:0 0 18px}
+h1{font:600 clamp(40px,6vw,72px)/1.04 var(--serif);letter-spacing:-.025em;margin:0 0 24px}
+h1 em{font-style:italic;font-weight:400;color:var(--accent)}
+.lede{font-size:19px;color:var(--muted);max-width:34em;margin:0 0 32px}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:8px;font:500 15px var(--sans);text-decoration:none;border:1px solid var(--ink);transition:transform .15s,background .2s,color .2s}
+.btn.primary{background:var(--ink);color:var(--bg)}
+.btn.primary:hover{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);transform:translateY(-2px)}
+.btn.ghost:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+.btn:active{transform:translateY(0) scale(.98)}
+
+.term{background:var(--code-bg);color:var(--code-ink);border-radius:12px;font:400 13.5px/1.7 var(--mono);box-shadow:0 24px 50px -24px rgba(28,25,23,.45);overflow:hidden}
+.term .bar{display:flex;gap:7px;padding:12px 16px;border-bottom:1px solid #2d2822}
+.term .bar i{width:10px;height:10px;border-radius:50%;background:#3b352d}
+.term pre{margin:0;padding:18px 20px;overflow-x:auto;white-space:pre}
+.c-m{color:#8a8070}.c-a{color:#fb923c}.c-g{color:#86efac}
+
+section{padding:96px 0;border-top:1px solid var(--line)}
+h2{font:600 clamp(30px,4vw,44px)/1.1 var(--serif);letter-spacing:-.02em;margin:0 0 12px}
+.sub{color:var(--muted);max-width:38em;margin:0 0 48px}
+
+.projects{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.card{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:28px;text-decoration:none;transition:transform .2s,border-color .2s,box-shadow .2s}
+.card:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 14px 30px -18px rgba(28,25,23,.35)}
+.card.lead{grid-column:1/-1}
+.card .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:10px}
+.card h3{font:600 24px/1.2 var(--serif);margin:0;letter-spacing:-.01em}
+.lang{font:500 12px var(--mono);color:var(--muted);white-space:nowrap}
+.card p{margin:0 0 20px;color:var(--muted);font-size:16px}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding:0;list-style:none}
+.tags li{font:400 12px var(--mono);border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--muted)}
+.card .go{font:500 13px var(--mono);color:var(--accent);margin-top:18px}
+.card .go::after{content:" →";display:inline-block;transition:transform .2s}
+.card:hover .go::after{transform:translateX(4px)}
+
+.skills{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
+.skills h3{font:500 13px var(--mono);color:var(--accent);margin:0 0 14px;letter-spacing:.04em}
+.skills ul{list-style:none;margin:0;padding:0;font-size:16px}
+.skills li{padding:7px 0;border-bottom:1px solid var(--line)}
+
+.about{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px}
+.about p{margin:0 0 18px;font-size:18px}
+.about p.muted{color:var(--muted)}
+
+.contact{text-align:left}
+.contact h2{font-size:clamp(36px,6vw,64px)}
+.contact .btns{margin-top:28px}
+footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font:400 13px var(--mono)}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+@media (max-width:860px){
+  .hero{min-height:0}
+  .hero .grid,.about{grid-template-columns:1fr;gap:36px}
+  .projects{grid-template-columns:1fr}
+  .skills{grid-template-columns:repeat(2,1fr)}
+  .nav ul{display:none}
+  section{padding:72px 0}
+  .btn{width:100%;justify-content:center}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
+@media (prefers-reduced-motion:no-preference){
+  .hero [data-enter]{opacity:0;transform:translateY(14px);animation:in .7s cubic-bezier(.2,.7,.2,1) forwards}
+  .hero [data-enter="1"]{animation-delay:.05s}.hero [data-enter="2"]{animation-delay:.15s}.hero [data-enter="3"]{animation-delay:.25s}.hero [data-enter="4"]{animation-delay:.35s}
+  @keyframes in{to{opacity:1;transform:none}}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#work">Skip to projects</a>
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="#top">kunal<b>.</b>ghosh</a>
+    <nav aria-label="Main"><ul>
+      <li><a href="#work">Projects</a></li>
+      <li><a href="#stack">Stack</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul></nav>
+    <button class="theme" id="theme" aria-label="Switch colour theme">◐</button>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+    <div class="hero">
+      <div class="grid">
+        <div>
+          <p class="eyebrow" data-enter="1">// backend &amp; infrastructure engineer</p>
+          <h1 data-enter="2">I build the plumbing that <em>keeps servers talking.</em></h1>
+          <p class="lede" data-enter="3">Queue runtimes, SSH gateways, mail servers and container networking, written in PHP, Go and Node.js. Everything below is open source.</p>
+          <div class="btns" data-enter="4">
+            <a class="btn primary" href="#work">See the projects</a>
+            <a class="btn ghost" href="https://github.com/kunalGhoshOne">View GitHub profile</a>
+          </div>
+        </div>
+        <div class="term" data-enter="3" aria-label="Example terminal session using pvm">
+          <div class="bar" aria-hidden="true"><i></i><i></i><i></i></div>
+<pre><span class="c-m">$</span> pvm install 8.3
+Installing PHP 8.3 …
+<span class="c-g">✓</span> installed to ~/.pvm/versions/8.3
+
+<span class="c-m">$</span> pvm use 8.3
+Now using PHP 8.3
+
+<span class="c-m">$</span> ssh -p 2222 user@gateway
+<span class="c-a">→</span> routed to container web-1</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section id="work">
+    <div class="wrap">
+      <h2>Selected projects</h2>
+      <p class="sub">Tools I built to fix something that kept getting in my way. Each links to its source.</p>
+      <div class="projects">
+
+        <a class="card lead" href="https://github.com/kunalGhoshOne/kqueue">
+          <div class="top"><h3>KQueue</h3><span class="lang">PHP · Swoole</span></div>
+          <p>A non-blocking runtime for Laravel queues. Every job runs in its own Swoole coroutine, so jobs waiting on the database or an HTTP call no longer hold up the next one. Three jobs that each wait two seconds on I/O finish in about two seconds on one thread, with no changes to existing job code. CPU-heavy jobs are routed to isolated child processes.</p>
+          <ul class="tags"><li>Laravel</li><li>Swoole</li><li>coroutines</li><li>queues</li></ul>
+          <span class="go">View source</span>
+        </a>
+
+        <a class="card" href="https://github.com/kunalGhoshOne/GateSSH">
+          <div class="top"><h3>GateSSH</h3><span class="lang">Go</span></div>
+          <p>An SSH and SFTP reverse proxy. One gateway routes each login to a Docker container, a Kubernetes pod or a private server, looked up through an HTTP API or MySQL, with per-target IP allow and deny lists.</p>
+          <ul class="tags"><li>SSH</li><li>SFTP</li><li>Docker</li><li>Kubernetes</li></ul>
+          <span class="go">View source</span>
+        </a>
+
+        <a class="card" href="https://github.com/kunalGhoshOne/imap-smtp">
+          <div class="top"><h3>imap-smtp</h3><span class="lang">Node.js</span></div>
+          <p>A modular email server speaking SMTP, IMAP and LMTP. It handles mailbox management, an outgoing queue with bounce tracking, dynamic IP selection and a web dashboard, and deploys with Docker.</p>
+          <ul class="tags"><li>SMTP</li><li>IMAP</li><li>LMTP</li><li>Docker</li></ul>
+          <span class="go">View source</span>
+        </a>
+
+        <a class="card" href="https://github.com/kunalGhoshOne/Nomad-Overlay-Network">
+          <div class="top"><h3>Nomad Overlay Network</h3><span class="lang">JavaScript</span></div>
+          <p>Containers started by Nomad on different hosts could not reach each other. This service attaches them to a Docker Swarm overlay network and registers and removes their DNS records in Consul automatically.</p>
+          <ul class="tags"><li>Nomad</li><li>Consul</li><li>Docker Swarm</li></ul>
+          <span class="go">View source</span>
+        </a>
+
+        <a class="card" href="https://github.com/kunalGhoshOne/pvm">
+          <div class="top"><h3>pvm</h3><span class="lang">Go</span></div>
+          <p>A PHP version manager for Linux that needs no root. Pre-built PHP tarballs live in GitHub Releases, and switching versions rewrites one file that shims in your PATH read. No shell functions required.</p>
+          <ul class="tags"><li>PHP</li><li>CLI</li><li>Linux</li></ul>
+          <span class="go">View source</span>
+        </a>
+
+        <a class="card lead" href="https://github.com/kunalGhoshOne/I.S.H.A">
+          <div class="top"><h3>I.S.H.A</h3><span class="lang">Python</span></div>
+          <p>A local, voice-first AI desktop assistant for GNOME on Linux. Say the wake word, talk, and it answers aloud while an animated avatar wanders your screen. Wake word, speech-to-text, a local LLM and text-to-speech run as three concurrent stages joined by queues, so the next sentence is usually synthesized before the current one finishes playing.</p>
+          <ul class="tags"><li>faster-whisper</li><li>Ollama</li><li>Piper TTS</li><li>openWakeWord</li><li>GNOME Shell</li></ul>
+          <span class="go">View source</span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="stack">
+    <div class="wrap">
+      <h2>What I work with</h2>
+      <p class="sub">Drawn from the repositories above and the rest of my GitHub.</p>
+      <div class="skills">
+        <div><h3>LANGUAGES</h3><ul><li>PHP</li><li>Go</li><li>JavaScript / Node.js</li><li>Python</li></ul></div>
+        <div><h3>FRAMEWORKS</h3><ul><li>Laravel</li><li>Swoole</li><li>Blade</li></ul></div>
+        <div><h3>INFRASTRUCTURE</h3><ul><li>Docker &amp; Swarm</li><li>Kubernetes</li><li>Nomad</li><li>Consul</li></ul></div>
+        <div><h3>PROTOCOLS &amp; DATA</h3><ul><li>SSH / SFTP</li><li>SMTP / IMAP / LMTP</li><li>MySQL</li><li>MongoDB</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="wrap about">
+      <div><h2>About</h2></div>
+      <div>
+        <p>I work close to the server: how jobs get scheduled, how connections get routed, how mail moves between machines.</p>
+        <p class="muted">Most of what I write starts as a limit I hit in a real deployment, such as workers that block, hosts that cannot see each other, or a PHP version I cannot switch without root, and ends as a small tool others can run.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <div class="wrap">
+      <h2>Want to build something together?</h2>
+      <p class="sub">The fastest way to reach me is through GitHub. Open an issue on any project or follow along.</p>
+      <div class="btns">
+        <a class="btn primary" href="https://github.com/kunalGhoshOne">Message me on GitHub</a>
+        <a class="btn ghost" href="https://github.com/kunalGhoshOne?tab=repositories">Browse all repositories</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span>© <span id="yr">2026</span> Kunal Ghosh</span><span>Static page, hosted on GitHub Pages</span></div></footer>
+
+<script>
+document.getElementById('yr').textContent=new Date().getFullYear();
+(function(){
+  var r=document.documentElement,b=document.getElementById('theme');
+  try{var s=localStorage.getItem('theme');if(s)r.setAttribute('data-theme',s)}catch(e){}
+  b.addEventListener('click',function(){
+    var dark=r.getAttribute('data-theme')?r.getAttribute('data-theme')==='dark':matchMedia('(prefers-color-scheme:dark)').matches;
+    var n=dark?'light':'dark';r.setAttribute('data-theme',n);
+    try{localStorage.setItem('theme',n)}catch(e){}
+  });
+})();
+</script>
+</body>
+</html>
