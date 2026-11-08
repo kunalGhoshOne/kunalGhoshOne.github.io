@@ -62,7 +62,7 @@ function genesis(short) {
     gsap.set(light, { x, y });
     const far = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
     light.dataset.s = (far * 2.2 / 20).toFixed(1);
-    score.unsay('light'); score.say('light', 'Let there be light.');
+    score.unsay('light'); score.say('light', 'Let there be... light.');
     caret.style.animation = 'none';
   });
   tl.to(caret, { boxShadow: '0 0 24px 8px #fff, 0 0 60px 20px rgba(255,236,190,.8)', background: '#fff', duration: short ? .45 : .6, ease: 'power2.in' });
@@ -103,8 +103,8 @@ document.fonts.ready.then(async () => {
       vrRes.style.opacity = sm(.9, .95, p);
       vrHint.style.opacity = (1 - sm(.3, .45, p)) * sm(0, .05, p + .05);
       score.strike(p);
-      if (p > 0.12) score.say('vritra', 'Every team has a Vritra.'); else score.unsay('vritra');
-      if (p > 0.9) score.say('flows', "What flows, when it's gone."); else if (p < 0.8) score.unsay('flows');
+      if (p > 0.12) score.say('vritra', 'Every team... has a Vritra.'); else score.unsay('vritra');
+      if (p > 0.9) score.say('flows', "What flows... when it's gone."); else if (p < 0.8) score.unsay('flows');
     },
     onToggle: s => s.isActive ? vr.start() : vr.stop(),
     onRefresh: () => { vr.resize(); },
@@ -135,7 +135,7 @@ document.fonts.ready.then(async () => {
     trigger: '#sea', start: 'top top', end: '+=2600', pin: '#seaPin', scrub: 0.6, anticipatePin: 1,
     onUpdate: s => {
       sea.p = s.progress;
-      if (s.progress > 0.1) score.say('pass', 'Let my code pass.'); else score.unsay('pass');
+      if (s.progress > 0.1) score.say('pass', 'Let my code... pass.'); else score.unsay('pass');
     },
     onRefresh: () => sea.resize()
   });
@@ -146,7 +146,7 @@ document.fonts.ready.then(async () => {
   $$('.sec-head, .proj .txt, .spec > div, .tl li, .contact .wrap > *').forEach(n => { if (!n.closest('.pin')) n.classList.add('rv'); });
   ScrollTrigger.batch('.rv', { start: 'top 88%', onEnter: b => gsap.to(b, { opacity: 1, y: 0, duration: 1, stagger: .08, ease: 'power3.out', overwrite: true }) });
 
-  ScrollTrigger.create({ trigger: '#contact', start: 'top 55%', onEnter: () => score.say('avail', 'Now available.'), onLeaveBack: () => score.unsay('avail') });
+  ScrollTrigger.create({ trigger: '#contact', start: 'top 55%', onEnter: () => score.say('avail', 'Now... available.'), onLeaveBack: () => score.unsay('avail') });
 
   // tools land in the spec sheet
   $$('.spec .hl').forEach(r => ScrollTrigger.create({ trigger: r, start: 'top 80%', end: 'bottom 20%', toggleClass: 'lit' }));
