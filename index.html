@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Kunal Ghosh — Backend and infrastructure engineer</title>
-<meta name="description" content="Kunal Ghosh builds queue runtimes, SSH gateways, mail servers and container networking tools in PHP, Go and Node.js. Open source on GitHub.">
-<meta property="og:title" content="Kunal Ghosh — Backend and infrastructure engineer">
-<meta property="og:description" content="Queue runtimes, SSH gateways, mail servers and container networking. PHP, Go, Node.js, Python.">
+<title>Kunal Ghosh — Backend and platform engineer</title>
+<meta name="description" content="Kunal Ghosh, backend and platform engineer with 6+ years building CI/CD automation, distributed job processing, SSH access management and DevOps tooling in Go, Node.js, Python and PHP.">
+<meta property="og:title" content="Kunal Ghosh — Backend and platform engineer">
+<meta property="og:description" content="6+ years building CI/CD platforms, job queues, SSH gateways and backup systems. Go, Node.js, Python, PHP.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#f4efe6">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c2410c'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='18' font-weight='700' text-anchor='middle' fill='%23f4efe6'%3EK%3C/text%3E%3C/svg%3E">
@@ -79,6 +79,11 @@ h2{font:600 clamp(30px,4vw,44px)/1.1 var(--serif);letter-spacing:-.02em;margin:0
 .card .go::after{content:" →";display:inline-block;transition:transform .2s}
 .card:hover .go::after{transform:translateX(4px)}
 
+.jobs{display:grid;gap:40px}
+.job{display:grid;grid-template-columns:.8fr 1.2fr;gap:8px 48px}
+.jh{grid-column:1}.job .org{grid-column:1;margin:0;color:var(--muted);font-size:15px}.job ul{grid-column:2;grid-row:1/span 2;margin:0;padding-left:18px}.job li{margin-bottom:10px;font-size:16px}
+.job h3{font:600 22px/1.2 var(--serif);margin:0 0 4px}.when{font:400 13px var(--mono);color:var(--accent)}
+.jh{display:flex;flex-direction:column}
 .skills{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
 .skills h3{font:500 13px var(--mono);color:var(--accent);margin:0 0 14px;letter-spacing:.04em}
 .skills ul{list-style:none;margin:0;padding:0;font-size:16px}
@@ -99,6 +104,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   .hero .grid,.about{grid-template-columns:1fr;gap:36px}
   .projects{grid-template-columns:1fr}
   .skills{grid-template-columns:repeat(2,1fr)}
+  .job{grid-template-columns:1fr}.job ul{grid-column:1;grid-row:auto;margin-top:12px}
   .nav ul{display:none}
   section{padding:72px 0}
   .btn{width:100%;justify-content:center}
@@ -117,6 +123,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   <div class="wrap">
     <a class="logo" href="#top">kunal<b>.</b>ghosh</a>
     <nav aria-label="Main"><ul>
+      <li><a href="#experience">Experience</a></li>
       <li><a href="#work">Projects</a></li>
       <li><a href="#stack">Stack</a></li>
       <li><a href="#about">About</a></li>
@@ -131,12 +138,12 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     <div class="hero">
       <div class="grid">
         <div>
-          <p class="eyebrow" data-enter="1">// backend &amp; infrastructure engineer</p>
+          <p class="eyebrow" data-enter="1">// backend &amp; platform engineer · Hojai, Assam</p>
           <h1 data-enter="2">I build the plumbing that <em>keeps servers talking.</em></h1>
-          <p class="lede" data-enter="3">Queue runtimes, SSH gateways, mail servers and container networking, written in PHP, Go and Node.js. Everything below is open source.</p>
+          <p class="lede" data-enter="3">Six years of production infrastructure: CI/CD automation, distributed job processing, SSH access management and AI-assisted deployment. Currently at Triophase Global Services. Open to remote work and relocation.</p>
           <div class="btns" data-enter="4">
             <a class="btn primary" href="#work">See the projects</a>
-            <a class="btn ghost" href="https://github.com/kunalGhoshOne">View GitHub profile</a>
+            <a class="btn ghost" href="mailto:kunalghosh10000@gmail.com">Email me</a>
           </div>
         </div>
         <div class="term" data-enter="3" aria-label="Example terminal session using pvm">
@@ -155,6 +162,36 @@ Now using PHP 8.3
     </div>
   </div>
 
+  <section id="experience">
+    <div class="wrap">
+      <h2>Experience</h2>
+      <p class="sub">Production infrastructure at Triophase, and web products before that.</p>
+      <div class="jobs">
+        <article class="job">
+          <div class="jh"><h3>Software Engineer</h3><span class="when">Aug 2022 – Present</span></div>
+          <p class="org">Triophase Global Services · Kolkata, West Bengal</p>
+          <ul>
+            <li>Designed and built a self-service CI/CD pipeline platform integrated with ClickUp and GitLab, giving teams one-click provisioning for any project. Deployment time fell by about 40% and production bugs by about 80%.</li>
+            <li>Built a custom SMTP/IMAP email service in Node.js with queued processing for high-volume, parallel delivery.</li>
+            <li>Designed an on-demand cluster provisioning platform on Nomad, so infrastructure teams can create clusters and deploy applications dynamically at scale.</li>
+            <li>Rebuilt the legacy backup system into an incremental backup manager that cuts backup time by up to 60% with clustering and parallel processing.</li>
+            <li>Built a high-performance SSH proxy in Go with an API-managed access layer that routes and audits connections across hosts without exposing infrastructure directly.</li>
+            <li>Built an AI-assisted deployment and monitoring system that provisions and deploys applications over SSH, then detects and remediates issues automatically.</li>
+          </ul>
+        </article>
+        <article class="job">
+          <div class="jh"><h3>Web Developer</h3><span class="when">Jan 2019 – May 2021</span></div>
+          <p class="org">Matrix Web Development · Guwahati, Assam</p>
+          <ul>
+            <li>Built an e-commerce platform on CodeIgniter 3 with inventory management and customer behaviour tracking.</li>
+            <li>Built a multi-school management system covering students, teachers, exams and academic workflows, with role-based access control.</li>
+            <li>Built a journal management and CRM system with client management, workflow tracking and scheduled email notifications.</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
   <section id="work">
     <div class="wrap">
       <h2>Selected projects</h2>
@@ -162,14 +199,14 @@ Now using PHP 8.3
       <div class="projects">
 
         <a class="card lead" href="https://github.com/kunalGhoshOne/kqueue">
-          <div class="top"><h3>KQueue</h3><span class="lang">PHP · Swoole</span></div>
+          <div class="top"><h3>KQueue</h3><span class="lang">PHP · Swoole · Feb 2026</span></div>
           <p>A non-blocking runtime for Laravel queues. Every job runs in its own Swoole coroutine, so jobs waiting on the database or an HTTP call no longer hold up the next one. Three jobs that each wait two seconds on I/O finish in about two seconds on one thread, with no changes to existing job code. CPU-heavy jobs are routed to isolated child processes.</p>
           <ul class="tags"><li>Laravel</li><li>Swoole</li><li>coroutines</li><li>queues</li></ul>
           <span class="go">View source</span>
         </a>
 
         <a class="card" href="https://github.com/kunalGhoshOne/GateSSH">
-          <div class="top"><h3>GateSSH</h3><span class="lang">Go</span></div>
+          <div class="top"><h3>GateSSH</h3><span class="lang">Go · Jan 2025</span></div>
           <p>An SSH and SFTP reverse proxy. One gateway routes each login to a Docker container, a Kubernetes pod or a private server, looked up through an HTTP API or MySQL, with per-target IP allow and deny lists.</p>
           <ul class="tags"><li>SSH</li><li>SFTP</li><li>Docker</li><li>Kubernetes</li></ul>
           <span class="go">View source</span>
@@ -210,12 +247,12 @@ Now using PHP 8.3
   <section id="stack">
     <div class="wrap">
       <h2>What I work with</h2>
-      <p class="sub">Drawn from the repositories above and the rest of my GitHub.</p>
+      <p class="sub">What I use day to day.</p>
       <div class="skills">
-        <div><h3>LANGUAGES</h3><ul><li>PHP</li><li>Go</li><li>JavaScript / Node.js</li><li>Python</li></ul></div>
-        <div><h3>FRAMEWORKS</h3><ul><li>Laravel</li><li>Swoole</li><li>Blade</li></ul></div>
-        <div><h3>INFRASTRUCTURE</h3><ul><li>Docker &amp; Swarm</li><li>Kubernetes</li><li>Nomad</li><li>Consul</li></ul></div>
-        <div><h3>PROTOCOLS &amp; DATA</h3><ul><li>SSH / SFTP</li><li>SMTP / IMAP / LMTP</li><li>MySQL</li><li>MongoDB</li></ul></div>
+        <div><h3>LANGUAGES</h3><ul><li>Go</li><li>Node.js / JavaScript</li><li>Python</li><li>PHP</li><li>SQL</li><li>Java (familiar)</li></ul></div>
+        <div><h3>BACKEND &amp; SYSTEMS</h3><ul><li>REST API design</li><li>Microservices</li><li>Distributed systems</li><li>Queue processing</li><li>SSH proxying &amp; access</li></ul></div>
+        <div><h3>DEVOPS</h3><ul><li>CI/CD pipelines</li><li>GitLab CI</li><li>Nomad</li><li>Docker</li><li>Linux administration</li><li>Monitoring &amp; alerting</li></ul></div>
+        <div><h3>FRAMEWORKS &amp; PROTOCOLS</h3><ul><li>Django</li><li>CodeIgniter</li><li>Laravel</li><li>SMTP / IMAP</li><li>Spring Boot (familiar)</li></ul></div>
       </div>
     </div>
   </section>
@@ -224,8 +261,8 @@ Now using PHP 8.3
     <div class="wrap about">
       <div><h2>About</h2></div>
       <div>
-        <p>I work close to the server: how jobs get scheduled, how connections get routed, how mail moves between machines.</p>
-        <p class="muted">Most of what I write starts as a limit I hit in a real deployment, such as workers that block, hosts that cannot see each other, or a PHP version I cannot switch without root, and ends as a small tool others can run.</p>
+        <p>I'm a backend and platform engineer with six-plus years of experience, comfortable across Go, Node.js, Python and PHP, with hands-on time in Nomad, Docker, GitLab CI/CD and Linux infrastructure.</p>
+        <p class="muted">I'm looking for senior backend or platform engineering roles. I hold a Bachelor of Arts in Economics from Guwahati University (2019–2022, CGPA 8.0 / 10).</p>
       </div>
     </div>
   </section>
@@ -233,10 +270,10 @@ Now using PHP 8.3
   <section id="contact" class="contact">
     <div class="wrap">
       <h2>Want to build something together?</h2>
-      <p class="sub">The fastest way to reach me is through GitHub. Open an issue on any project or follow along.</p>
+      <p class="sub">Open to senior backend and platform roles, remote or with relocation.</p>
       <div class="btns">
-        <a class="btn primary" href="https://github.com/kunalGhoshOne">Message me on GitHub</a>
-        <a class="btn ghost" href="https://github.com/kunalGhoshOne?tab=repositories">Browse all repositories</a>
+        <a class="btn primary" href="mailto:kunalghosh10000@gmail.com">Email kunalghosh10000@gmail.com</a>
+        <a class="btn ghost" href="https://github.com/kunalGhoshOne">View GitHub profile</a>
       </div>
     </div>
   </section>
