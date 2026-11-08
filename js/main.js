@@ -104,7 +104,6 @@ document.fonts.ready.then(async () => {
       vrHint.style.opacity = (1 - sm(.3, .45, p)) * sm(0, .05, p + .05);
       score.strike(p);
       if (p > 0.12) score.say('vritra', 'Every team... has a Vritra.'); else score.unsay('vritra');
-      if (p > 0.9) score.say('flows', "What flows... when it's gone."); else if (p < 0.8) score.unsay('flows');
     },
     onToggle: s => s.isActive ? vr.start() : vr.stop(),
     onRefresh: () => { vr.resize(); },
@@ -121,10 +120,7 @@ document.fonts.ready.then(async () => {
       const sy = new Systems($('#syCanvas'), $('#syLabels'));
       ScrollTrigger.create({
         trigger: '#systems', start: 'top top', end: '+=2200', pin: '#systemsPin', scrub: 0.6, anticipatePin: 1,
-        onUpdate: s => {
-          sy.p = s.progress;
-          if (s.progress > 0.04) score.say('systems', 'The machinery... exploded.'); else score.unsay('systems');
-        },
+        onUpdate: s => { sy.p = s.progress; },
         onRefresh: () => sy.resize()
       });
       ScrollTrigger.create({ trigger: '#systems', start: 'top bottom', end: 'bottom top', onToggle: s => s.isActive ? sy.start() : sy.stop() });
@@ -139,7 +135,6 @@ document.fonts.ready.then(async () => {
     onUpdate: s => {
       sea.p = s.progress;
       if (s.progress > 0.1) score.say('pass', 'Let my code... pass.'); else score.unsay('pass');
-      if (s.progress > 0.92) score.say('seahead', 'A path... through the noise.'); else if (s.progress < 0.85) score.unsay('seahead');
     },
     onRefresh: () => sea.resize()
   });
@@ -150,12 +145,10 @@ document.fonts.ready.then(async () => {
   $$('.sec-head, .proj .txt, .spec > div, .tl li, .contact .wrap > *').forEach(n => { if (!n.closest('.pin')) n.classList.add('rv'); });
   ScrollTrigger.batch('.rv', { start: 'top 88%', onEnter: b => gsap.to(b, { opacity: 1, y: 0, duration: 1, stagger: .08, ease: 'power3.out', overwrite: true }) });
 
-  ScrollTrigger.create({ trigger: '#contact', start: 'top 55%', onEnter: () => score.say('avail', 'Now available... for senior backend and platform roles.'), onLeaveBack: () => score.unsay('avail') });
-  ScrollTrigger.create({ trigger: '#specs', start: 'top 60%', onEnter: () => score.say('specs', 'Kunal Ghosh... as specified.'), onLeaveBack: () => score.unsay('specs') });
-  // headlines the narrator reads as you reach them
+  // the narrator's lines, read as you reach them
   ScrollTrigger.create({ trigger: '#hero', start: 'top 40%', end: 'bottom 40%', onEnterBack: () => score.say('hero', HERO_LINE), onLeave: () => score.unsay('hero') });
-  ScrollTrigger.create({ trigger: '#projects', start: 'top 60%', onEnter: () => score.say('projects', 'Five tools... each with a reason to exist.'), onLeaveBack: () => score.unsay('projects') });
   ScrollTrigger.create({ trigger: '#story', start: 'top 60%', onEnter: () => score.say('story', 'An economics student... who ended up under the hood.'), onLeaveBack: () => score.unsay('story') });
+  ScrollTrigger.create({ trigger: '#contact', start: 'top 55%', onEnter: () => score.say('avail', 'Now... available.'), onLeaveBack: () => score.unsay('avail') });
 
   // tools land in the spec sheet
   $$('.spec .hl').forEach(r => ScrollTrigger.create({ trigger: r, start: 'top 80%', end: 'bottom 20%', toggleClass: 'lit' }));
@@ -170,4 +163,51 @@ $('#sound').addEventListener('click', () => {
   $('#sound').setAttribute('aria-pressed', String(on));
   // turned on at the top of the page: the narrator opens with the headline
   if (on && scrollY < innerHeight * 0.6) { score.unsay('hero'); setTimeout(() => score.say('hero', HERO_LINE), 900); }
+  if (on) startTour(); else stopTour();
 });
+
+/* ---------------- auto-tour: with sound on, the page scrolls itself ---------------- */
+let tour = null;
+const hint = $('#tourHint');
+function showHint(v) { if (hint) hint.classList.toggle('on', v); }
+function stopTour() { if (tour) { tour.kill(); tour = null; } showHint(false); }
+function startTour() {
+  stopTour();
+  if (reduce) return;
+  const pin = id => ScrollTrigger.getAll().find(s => s.pin && s.trigger.id === id);
+  const top = sel => { const e = $(sel); return e ? e.getBoundingClientRect().top + scrollY : null; };
+  const at = (st, f) => st.start + (st.end - st.start) * f;
+  const V = pin('vritra'), S = pin('systems'), E = pin('sea');
+  const max = ScrollTrigger.maxScroll(window);
+  // [scroll position, seconds to get there, seconds to hold]
+  const steps = [
+    [0, 0, 4.2],                                   // hero: the opening line
+    V && [V.start, 2.4, .6],
+    V && [at(V, .3), 4, 1.8],                      // Vritra coils: "Every team has a Vritra"
+    V && [at(V, .5), 3, .2],                       // the storm gathers
+    V && [at(V, .64), 2.2, .6],                    // the strike
+    V && [V.end, 5.5, 2.4],                        // the results land
+    S && [S.start, 2.2, .3],
+    S && [S.end, 8, 1],                            // the machinery comes apart
+    [top('#projects'), 2.4, .5],
+    E && [E.start, 22, .4],                        // the five projects
+    E && [at(E, .2), 3.2, 2.2],                    // "Let my code pass"
+    E && [E.end, 10, 1.2],                         // the crossing
+    [top('#specs'), 2.4, 1],
+    [top('#story'), 7, 4.5],                       // "An economics student..."
+    [top('#contact'), 6, .5],
+    [max, 2.5, 0],                                 // "Now available"
+  ].filter(s => s && s[0] != null && s[0] > scrollY + 4 || (s && s[0] === 0 && scrollY < 4));
+  if (!steps.length) return;
+  const proxy = { y: scrollY };
+  const apply = () => { if (lenis) lenis.scrollTo(proxy.y, { immediate: true, force: true }); else scrollTo(0, proxy.y); };
+  tour = gsap.timeline({ onComplete: () => { tour = null; showHint(false); } });
+  for (const [y, dur, hold] of steps) {
+    if (dur > 0) tour.to(proxy, { y: Math.min(y, max), duration: dur, ease: 'sine.inOut', onUpdate: apply });
+    if (hold > 0) tour.to({}, { duration: hold });
+  }
+  showHint(true);
+}
+// any real input hands control back to the visitor
+['wheel', 'touchstart', 'keydown'].forEach(ev => addEventListener(ev, () => { if (tour) stopTour(); }, { passive: true }));
+addEventListener('pointerdown', e => { if (tour && !e.target.closest('#sound')) stopTour(); });
