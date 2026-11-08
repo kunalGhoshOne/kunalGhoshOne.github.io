@@ -15,7 +15,7 @@ $('#yr').textContent = new Date().getFullYear();
 /* ---------------- smooth scroll ---------------- */
 let lenis = null;
 if (!reduce && window.Lenis) {
-  lenis = new window.Lenis({ lerp: 0.085, wheelMultiplier: 0.9 });
+  lenis = new window.Lenis({ lerp: 0.1, wheelMultiplier: 1, smoothWheel: true });
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add(t => lenis.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);
@@ -95,7 +95,7 @@ document.fonts.ready.then(async () => {
   const vrA = $('#vrA'), vrB = $('#vrB'), vrRes = $('#vrResults'), vrHint = $('#vrHint');
   const sm = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
   ScrollTrigger.create({
-    trigger: '#vritra', start: 'top top', end: '+=3400', pin: '#vritraPin', scrub: true, anticipatePin: 1,
+    trigger: '#vritra', start: 'top top', end: '+=2600', pin: '#vritraPin', scrub: 0.6, anticipatePin: 1,
     onUpdate: s => {
       const p = vr.p = s.progress;
       vrA.style.opacity = 1 - sm(.42, .5, p);
@@ -120,7 +120,7 @@ document.fonts.ready.then(async () => {
       const { Systems } = await import('./systems.js');
       const sy = new Systems($('#syCanvas'), $('#syLabels'));
       ScrollTrigger.create({
-        trigger: '#systems', start: 'top top', end: '+=2600', pin: '#systemsPin', scrub: true, anticipatePin: 1,
+        trigger: '#systems', start: 'top top', end: '+=2200', pin: '#systemsPin', scrub: 0.6, anticipatePin: 1,
         onUpdate: s => { sy.p = s.progress; },
         onRefresh: () => sy.resize()
       });
@@ -132,7 +132,7 @@ document.fonts.ready.then(async () => {
   // --- The sea
   const sea = new Sea($('#seaCanvas'), $('#seaHead'));
   ScrollTrigger.create({
-    trigger: '#sea', start: 'top top', end: '+=2600', pin: '#seaPin', scrub: true, anticipatePin: 1,
+    trigger: '#sea', start: 'top top', end: '+=2600', pin: '#seaPin', scrub: 0.6, anticipatePin: 1,
     onUpdate: s => {
       sea.p = s.progress;
       if (s.progress > 0.1) score.say('pass', 'Let my code pass.'); else score.unsay('pass');

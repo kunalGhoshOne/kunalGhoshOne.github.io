@@ -12,7 +12,7 @@ export class Systems {
     this.c = canvas; this.labels = [...labels.children];
     this.p = 0; this.running = false;
     const r = this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
-    r.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+    r.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));
     r.outputColorSpace = THREE.SRGBColorSpace;
     r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.05;
     r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -24,7 +24,7 @@ export class Systems {
     scene.add(new THREE.HemisphereLight(0xffffff, 0xe9dfcb, 0.6));
     const sun = new THREE.DirectionalLight(0xfff1d6, 2.4);
     sun.position.set(6, 12, 7); sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048); sun.shadow.radius = 6;
+    sun.shadow.mapSize.set(1024, 1024); sun.shadow.radius = 6;
     Object.assign(sun.shadow.camera, { left: -8, right: 8, top: 8, bottom: -8, near: 1, far: 40 });
     scene.add(sun);
     const ground = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.ShadowMaterial({ opacity: 0.1 }));

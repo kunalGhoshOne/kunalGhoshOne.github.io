@@ -28,6 +28,8 @@ const easeInOut = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 function rng(seed) { return () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; }
 const rgb = (c, a) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${a})`;
 const mix = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
+const INKS = rgb(INK, 1);
+const GLOWRAMP = Array.from({ length: 11 }, (_, i) => rgb(mix(INK, GOLD, i / 10), 1));
 
 const widthCache = new Map();
 function gw(ch, font) {
@@ -54,7 +56,7 @@ export class Vritra {
   }
 
   resize() {
-    const dpr = Math.min(devicePixelRatio || 1, 2);
+    const dpr = Math.min(devicePixelRatio || 1, 1.5);
     const W = this.c.clientWidth, H = this.c.clientHeight;
     this.W = W; this.H = H; this.dpr = dpr;
     this.c.width = Math.round(W * dpr); this.c.height = Math.round(H * dpr);
@@ -118,7 +120,7 @@ export class Vritra {
 
   // ---------- spine ----------
   spine(t, coil) {
-    const N = 420, R = this.R * (1 - 0.08 * coil), cx = this.cx, cy = this.cy;
+    const N = 420, R = this.R * (this.zoom || 1) * (1 - 0.08 * coil), cx = this.cx, cy = this.cy;
     // counter-clockwise coil that ends on its right side heading up, so the
     // front of the coil reads upright and the neck rises outside the body
     const SC = 0.74, turns = 1.2 + 0.25 * coil, endA = 0, th0 = endA + turns * Math.PI * 2;
@@ -179,7 +181,7 @@ export class Vritra {
       const k = 1 - 0.22 * edge, alpha = 0.92 - 0.5 * edge;
       // visible range along the spine for this lane
       let a0 = -1, a1 = -1;
-      for (let a = 0; a <= headStart; a += 4) { if (Math.abs(o) <= this.bodyW(a, sp, t) / 2) { if (a0 < 0) a0 = a; a1 = a; } }
+      for (let a = 0; a <= headStart; a += 6) { if (Math.abs(o) <= this.bodyW(a, sp, t) / 2) { if (a0 < 0) a0 = a; a1 = a; } }
       if (a0 < 0) continue;
       // tape: text slides along the body like scales
       const speed = 16 + j * 1.5;
@@ -195,17 +197,18 @@ export class Vritra {
           const ang = Math.atan2(P.dy, P.dx);
           const s = ac / sp.total;
           const glow = glowP > 0 ? smooth(1 - glowP * 1.05, 1 - glowP * 1.05 + 0.08, s) : 0;
-          const col = glow > 0 ? mix(INK, GOLD, glow) : INK;
           const c = Math.cos(ang) * k, sn = Math.sin(ang) * k;
           ctx.setTransform(c * dpr, sn * dpr, -sn * dpr, c * dpr, x * dpr, y * dpr);
           const depth = y < this.cy && s < 0.74 ? 0.55 : 1; // far side of the coil sits back
-          ctx.fillStyle = rgb(col, alpha * depth * (0.35 + 0.65 * smooth(0, 0.12, s)));
+          ctx.fillStyle = glow > 0 ? GLOWRAMP[Math.round(glow * 10)] : INKS;
+          ctx.globalAlpha = alpha * depth * (0.35 + 0.65 * smooth(0, 0.12, s));
           ctx.fillText(ch, 0, 0);
           if (out) out.push({ ch, x, y, ang, k, s, a: alpha });
         }
         a += w; ci = (ci + 1) % n;
       }
     }
+    ctx.globalAlpha = 1;
     // head: BOTTLENECK along the neck
     ctx.font = this.hfont;
     let a = headStart + this.FS * 0.8;
@@ -290,18 +293,20 @@ export class Vritra {
         const j = i === n ? 0 : (jit() - .5) * amp;
         pts.push([sx + dx * f + nx * j, sy + dy * f + ny * j]);
       }
-      const trail = (lw, col, blur) => {
-        ctx.lineWidth = lw; ctx.shadowBlur = blur; ctx.shadowColor = rgb(GOLDHI, 1);
-        for (let i = 1; i < pts.length; i++) {
-          ctx.strokeStyle = col(i / n);
-          ctx.beginPath(); ctx.moveTo(pts[i - 1][0], pts[i - 1][1]); ctx.lineTo(pts[i][0], pts[i][1]); ctx.stroke();
-        }
+      // one path per pass with a gradient along the trail: no per-segment blur, so it stays fast
+      const tx0 = pts[0][0], ty0 = pts[0][1];
+      const trail = (lw, rgbc, amax) => {
+        const gr = ctx.createLinearGradient(tx0, ty0, Mx, My);
+        gr.addColorStop(0, rgb(rgbc, 0)); gr.addColorStop(1, rgb(rgbc, amax));
+        ctx.lineWidth = lw; ctx.strokeStyle = gr;
+        ctx.beginPath(); ctx.moveTo(tx0, ty0); for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.stroke();
       };
-      trail(16, a => rgb(GOLDHI, .16 * a), 30);
-      trail(5, a => rgb(GOLD, .85 * a), 16);
-      trail(1.8, a => `rgba(255,255,255,${a})`, 6);
+      ctx.shadowBlur = 0;
+      trail(22, GOLDHI, .12); trail(12, GOLDHI, .22);
+      trail(5, GOLD, .9);
+      trail(1.8, [255, 255, 255], 1);
       // crackling tendrils around the warhead
-      ctx.shadowBlur = 12; ctx.lineWidth = 1.4;
+      ctx.lineWidth = 1.4;
       for (let k = 0; k < 6; k++) {
         const ang = jit() * Math.PI * 2, len = 18 + jit() * 42;
         ctx.strokeStyle = rgb(k % 2 ? GOLDHI : [255, 250, 235], .85);
@@ -324,14 +329,17 @@ export class Vritra {
     const hit = clamp((p - 0.53) / 0.08, 0, 1);
     if (hit > 0 && hit < 1) {
       const maxR = Math.min(this.W, this.H) * 0.55;
-      ctx.shadowColor = rgb(GOLDHI, 1); ctx.shadowBlur = 18;
+      ctx.shadowBlur = 0;
       for (const [d, w] of [[0, 4], [0.18, 2]]) {
         const h = clamp((hit - d) / (1 - d), 0, 1); if (h <= 0) continue;
+        const rx = maxR * easeOut(h), ry = rx * .62;
+        ctx.lineWidth = (w * (1 - h) + .5) * 4; ctx.strokeStyle = rgb(GOLDHI, (1 - h) * .18);
+        ctx.beginPath(); ctx.ellipse(E.x, E.y, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
         ctx.lineWidth = w * (1 - h) + .5; ctx.strokeStyle = rgb(GOLD, (1 - h) * .9);
-        ctx.beginPath(); ctx.ellipse(E.x, E.y, maxR * easeOut(h), maxR * easeOut(h) * .62, 0, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath(); ctx.ellipse(E.x, E.y, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
       }
       const sr = rng(31);
-      ctx.lineWidth = 2; ctx.shadowBlur = 8;
+      ctx.lineWidth = 2;
       for (let k = 0; k < 44; k++) {
         const ang = sr() * Math.PI * 2, dist = (50 + sr() * 220) * easeOut(hit), len = 10 + sr() * 18;
         const x1 = E.x + Math.cos(ang) * dist, y1 = E.y + Math.sin(ang) * dist + hit * hit * 60;
@@ -346,15 +354,16 @@ export class Vritra {
     if (!this.bolt || alpha <= 0) return;
     const ctx = this.ctx; ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     const path = (pts, frac) => { const n = Math.max(2, Math.floor(pts.length * frac)); ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < n; i++) ctx.lineTo(pts[i][0], pts[i][1]); };
-    const strokeAll = (lw, col, blur) => {
-      ctx.lineWidth = lw; ctx.strokeStyle = col; ctx.shadowColor = rgb(GOLDHI, 1); ctx.shadowBlur = blur;
+    const strokeAll = (lw, col) => {
+      ctx.lineWidth = lw; ctx.strokeStyle = col; ctx.shadowBlur = 0;
       path(this.bolt.pts, f); ctx.stroke();
       for (const b of this.bolt.branches) if (f > b.at) { path(b.pts, clamp((f - b.at) / (1 - b.at) * 1.4, 0, 1)); ctx.stroke(); }
     };
     ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-    strokeAll(14, rgb(GOLDHI, .18 * alpha), 40);
-    strokeAll(5, rgb(GOLD, .9 * alpha), 20);
-    strokeAll(1.8, `rgba(255,255,255,${alpha})`, 8);
+    strokeAll(22, rgb(GOLDHI, .1 * alpha));
+    strokeAll(11, rgb(GOLDHI, .2 * alpha));
+    strokeAll(5, rgb(GOLD, .9 * alpha));
+    strokeAll(1.8, `rgba(255,255,255,${alpha})`);
     ctx.shadowBlur = 0;
   }
 
@@ -372,19 +381,26 @@ export class Vritra {
     });
     for (let i = 0; i < T.length && i < order.length; i++) ps[order[i]].target = T[i];
     for (const p of ps) if (!p.target) p.fall = { x: p.x + (r() - .5) * 80, y: this.H + 40 + r() * 160 };
-    this.particles = ps;
+    // keep every letter that lands, and a third of the ones that pour away
+    this.particles = ps.filter((p, i) => p.target || i % 3 === 0);
   }
 
   drawParticles(q, fade) {
     const ctx = this.ctx, dpr = this.dpr, scaleT = this.RFS / this.FS;
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.font = `600 ${this.FS}px Geist`;
+    // colours precomputed in 11 steps; alpha goes through globalAlpha, so no strings per letter
+    if (!this.ramps) {
+      const ramp = (a, b) => Array.from({ length: 11 }, (_, i) => rgb(mix(a, b, i / 10), 1));
+      this.ramps = { ink: ramp(GOLDHI, INK), goldink: ramp(GOLDHI, GOLDINK), gold: ramp(GOLDHI, GOLD), body: rgb(GOLD, 1) };
+    }
+    const R = this.ramps;
     for (const p of this.particles) {
       const qi = clamp((q - 0.28 * (1 - p.s)) / 0.72, 0, 1);
       if (qi <= 0) { // not yet released: hold as glowing body
         const c = Math.cos(p.ang) * p.k, sn = Math.sin(p.ang) * p.k;
         ctx.setTransform(c * dpr, sn * dpr, -sn * dpr, c * dpr, p.x * dpr, p.y * dpr);
-        ctx.fillStyle = rgb(GOLD, p.a); ctx.fillText(p.ch, 0, 0); continue;
+        ctx.globalAlpha = p.a * fade; ctx.fillStyle = R.body; ctx.fillText(p.ch, 0, 0); continue;
       }
       const b = clamp(qi / 0.3, 0, 1), e = clamp((qi - 0.3) / 0.7, 0, 1);
       const bx = p.x + p.vx * easeOut(b), by = p.y + p.vy * easeOut(b);
@@ -397,17 +413,18 @@ export class Vritra {
       if (p.target) {
         k = lerp(p.k, scaleT, smooth(.55, 1, e));
         if (e > 0.82) ch = p.target.ch;
-        col = mix(GOLDHI, p.target.gold ? GOLDINK : INK, smooth(.6, 1, e));
+        col = (p.target.gold ? R.goldink : R.ink)[Math.round(smooth(.6, 1, e) * 10)];
         a = 1;
       } else {
-        k = p.k * (1 - .3 * e); col = mix(GOLDHI, GOLD, e); a = 1 - smooth(.6, 1, e);
+        k = p.k * (1 - .3 * e); col = R.gold[Math.round(e * 10)]; a = 1 - smooth(.6, 1, e);
       }
       a *= fade;
       if (a <= 0.01) continue;
       const c = Math.cos(ang) * k, sn = Math.sin(ang) * k;
       ctx.setTransform(c * dpr, sn * dpr, -sn * dpr, c * dpr, x * dpr, y * dpr);
-      ctx.fillStyle = rgb(col, a); ctx.fillText(ch, 0, 0);
+      ctx.globalAlpha = a; ctx.fillStyle = col; ctx.fillText(ch, 0, 0);
     }
+    ctx.globalAlpha = 1;
   }
 
   frame(now) {
@@ -415,6 +432,8 @@ export class Vritra {
     const p = this.p;
     if (p < 0.5) { this.clock += dt; this.frozen = false; this.particles = null; }
     const t = this.clock, coil = smooth(0.0, 0.48, p);
+    // Vritra grows toward you from the first pixel of scroll, so the pin never feels stuck
+    this.zoom = 0.86 + 0.22 * smooth(0, 0.46, Math.min(p, 0.5));
     const ctx = this.ctx, W = this.W, H = this.H, dpr = this.dpr;
     ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, this.c.width, this.c.height);
 

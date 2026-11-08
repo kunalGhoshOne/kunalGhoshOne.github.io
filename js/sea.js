@@ -23,7 +23,7 @@ export class Sea {
     this.resize();
   }
   resize() {
-    const dpr = Math.min(devicePixelRatio || 1, 2), W = this.c.clientWidth, H = this.c.clientHeight;
+    const dpr = Math.min(devicePixelRatio || 1, 1.5), W = this.c.clientWidth, H = this.c.clientHeight;
     Object.assign(this, { W, H, dpr });
     this.c.width = Math.round(W * dpr); this.c.height = Math.round(H * dpr);
     this.FS = W < 700 ? 11 : 13;
