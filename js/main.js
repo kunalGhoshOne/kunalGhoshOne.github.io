@@ -148,7 +148,7 @@ document.fonts.ready.then(async () => {
   // the narrator's lines, read as you reach them
   ScrollTrigger.create({ trigger: '#hero', start: 'top 40%', end: 'bottom 40%', onEnterBack: () => score.say('hero', HERO_LINE), onLeave: () => score.unsay('hero') });
   ScrollTrigger.create({ trigger: '#story', start: 'top 60%', onEnter: () => score.say('story', 'An economics student... who ended up under the hood.'), onLeaveBack: () => score.unsay('story') });
-  ScrollTrigger.create({ trigger: '#contact', start: 'top 55%', onEnter: () => score.say('avail', 'Now... available.'), onLeaveBack: () => score.unsay('avail') });
+  ScrollTrigger.create({ trigger: '#contact', start: 'top 55%', onEnter: () => score.say('avail', 'Now available... For senior backend and platform roles.'), onLeaveBack: () => score.unsay('avail') });
 
   // tools land in the spec sheet
   $$('.spec .hl').forEach(r => ScrollTrigger.create({ trigger: r, start: 'top 80%', end: 'bottom 20%', toggleClass: 'lit' }));
